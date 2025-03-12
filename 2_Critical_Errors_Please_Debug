@@ -1,0 +1,78 @@
+require('dotenv').config();
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+
+const logFilePath = path.join(__dirname, 'api.log');
+const API_KEY = process.env.YOUR_API_KEY;
+
+const api = axios.create({
+  baseURL: 'https://jsonplaceholder.typicode.com',
+  timeout: 5000,
+  headers: API_KEY ? { 'Authorization': `Bearer ${API_KEY}` } : {},
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const timestamp = new Date().toISOString();
+    const logMessage = `${timestamp} - Request: ${config.method.toUpperCase()} ${config.url}\n`;
+    fs.appendFileSync(logFilePath, logMessage);
+    return config;
+  },
+  (error) => {
+    const timestamp = new Date().toISOString();
+    const logMessage = `${timestamp} - Request Error: ${error.message}\n`;
+    fs.appendFileSync(logFilePath, logMessage);
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    const timestamp = new Date().toISOString();
+    const logMessage = `${timestamp} - Response: ${response.status} ${response.statusText} ${response.config.url}\n`;
+    fs.appendFileSync(logFilePath, logMessage);
+    return response;
+  },
+  (error) => {
+    const timestamp = new Date().toISOString();
+    let logMessage = `${timestamp} - Response Error: ${error.message}\n`;
+
+    if (error.code === 'ECONNABORTED') {
+      logMessage = `${timestamp} - Response Error: Timeout occurred\n`;
+    }
+
+    fs.appendFileSync(logFilePath, logMessage);
+    return Promise.reject(error);
+  }
+);
+
+async function fetchData(endpoint) {
+  try {
+    const response = await api.get(endpoint);
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.message);
+    throw error;
+  }
+}
+
+async function main() {
+  try {
+    await fetchData('/posts/1');
+    await fetchData('/todos/1');
+    
+    await api.get('/third-endpoint').then((response) => {
+      console.log('API Response:', response.data);
+    });
+    
+    fs.appendFileSync('error.log', "logging more data here to the file");
+
+    await fetchData('/users/1');
+  } catch (err) {
+    console.log('Main function error handled');
+  }
+}
+
+main();
