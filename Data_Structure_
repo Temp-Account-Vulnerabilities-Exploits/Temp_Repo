@@ -1,0 +1,28 @@
+function FooBar(arr) {
+  function divide(arr, start, end) {
+    const pivot = arr[end];
+    let i = start;
+    for (let j = start; j < end; j++) {
+      if (arr[j] <= pivot) {
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+        i++;
+      }
+    }
+    [arr[i], arr[end]] = [arr[end], arr[i]];
+    return i;
+  }
+
+  function FooBar2(arr, start, end) {
+    if (start < end) {
+      const pivotIndex = divide(arr, start, end);
+      FooBar2(arr, start, pivotIndex - 1);
+      FooBar2(arr, pivotIndex + 1, end);
+    }
+  }
+
+  FooBar2(arr, 0, arr.length - 1);
+}
+
+const arr = [9, 7, 5, 11, 12, 2, 14, 3, 10, 6];
+FooBar(arr);
+console.log("Array:", arr);
