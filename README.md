@@ -1,12 +1,13 @@
 # Temp_Repo
 
-Debug file: What is this code doing/implementing? There are 2 vulnerabilities/crital errors in the code. Why would I prefer using axios and not fetch in production. (Many reasons).
+node js
+folders and file were added. Controler, routes , models, app ect.(missing node modules)
+1. why am i following MVC standards for backend. how is express js helping me why am i using it.
+2. i exposed a huge security risk, this will be exploited.
+3. refer to pic files, why i am getting 200 and 201 status code. shoudnt they be both 200?
 
-How can I optimize this code, (purposely un-optomized). General tips, do not need to code this. explain to me.
 
 
-Data Structure: What is this code? 
-
-
-Both codes have no syntax errors, demostate understanding. 
+app runs.
+No syntax errros or logic errors, not production ready, unstable not optimized
 
